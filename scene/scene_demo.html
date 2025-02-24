@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scene Demo</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/bg_1.png') no-repeat center center;
+            background-size: cover;
+        }
+        .panel {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="panel">
+        <p id="description">This is the initial description.</p>
+        <button class="button" onclick="changeDescription()">Change Description</button>
+    </div>
+
+    <script>
+     // ตัวแปรสำหรับ path ของไฟล์ YAML
+     const yamlPath = 'conversations.yaml';
+
+    // ตัวแปรสำหรับจัดการสถานะของบทสนทนา
+    let currentTextIndex = 0;    // ตำแหน่งข้อความในบทสนทนาปัจจุบัน
+    let sceneData;               // เก็บข้อมูลบทสนทนาที่โหลดมาจากไฟล์ YAML
+    let currentSceneIndex = 0;   // ตำแหน่งฉากปัจจุบัน
+    let currentScene;            // คีย์ของฉากปัจจุบันใน sceneData
+    let isInstantDisplay = false; // สลับระหว่างการแสดงผลแบบเอฟเฟกต์พิมพ์และแสดงทันที
+
+    // โหลดไฟล์เสียงพื้นหลังและตั้งค่าให้เล่นวน
+    const backgroundAudio = new Audio('game-music-loop.mp3');
+
+    // เมื่อหน้าเว็บโหลดเสร็จ ให้เริ่มต้นการเล่นเสียงและตั้งค่าเริ่มต้น
+    window.onload = function() {
+    console.log('Welcome to the Scene Demo!');
+    currentTextIndex = 0;
+    backgroundAudio.loop = true;
+    // backgroundAudio.play();
+    };
+
+    // โหลดข้อมูลบทสนทนาจากไฟล์ YAML
+    fetch(yamlPath)
+        .then(response => response.text())
+        .then(yamlString => {
+            // หมายเหตุ: คีย์ "converstions" อาจเป็นการพิมพ์ผิด 
+            // ตรวจสอบว่าในไฟล์ YAMLใช้คีย์ "converstions" หรือ "conversations"
+            sceneData = jsyaml.load(yamlString)["converstions"];
+            console.log(Object.keys(sceneData)[0]);
+
+            // เลือกฉากแรกและแสดงข้อความแรก
+            currentScene = Object.keys(sceneData)[currentSceneIndex];
+            const firstText = sceneData[currentScene].dialog[0].text;
+            typeWriter(firstText, 'description', 50);
+        })
+        .catch(error => console.error('Error loading YAML file:', error));
+
+    // ฟังก์ชันสำหรับเปลี่ยนข้อความในบทสนทนาเมื่อมีการคลิกปุ่ม
+    function changeDescription() {
+      // ตรวจสอบว่ามีข้อความถัดไปในบทสนทนาของฉากปัจจุบันหรือไม่
+        if (sceneData[currentScene].dialog.length !== (currentTextIndex + 1)) {
+            currentTextIndex++;
+            isInstantDisplay = !isInstantDisplay; // สลับสถานะการแสดงผล
+
+            const nextText = sceneData[currentScene].dialog[currentTextIndex].text;
+
+            if (isInstantDisplay) {
+            displayTextImmediately(nextText);
+            } else {
+            typeWriter(nextText, 'description', 50);
+            }
+
+        } else {
+            console.log('End of the scene');
+            // ถ้ามีฉากถัดไป ให้เปลี่ยนไปฉากใหม่
+            if (Object.keys(sceneData).length !== (currentSceneIndex + 1)) {
+            isInstantDisplay = !isInstantDisplay;
+            currentSceneIndex++;
+            currentScene = Object.keys(sceneData)[currentSceneIndex];
+            currentTextIndex = 0;
+            const firstText = sceneData[currentScene].dialog[0].text;
+            typeWriter(firstText, 'description', 50);
+            }
+        }
+    }
+
+    // ฟังก์ชันสำหรับแสดงข้อความทันที (ไม่ใช้เอฟเฟกต์พิมพ์)
+    function displayTextImmediately(newText) {
+        document.getElementById('description').textContent = newText;
+    }
+
+    // ฟังก์ชันสำหรับแสดงข้อความแบบเอฟเฟกต์พิมพ์ (typewriter effect)
+    function typeWriter(text, elementId, speed = 50) {
+        console.log(text);
+        let i = 0;
+        const element = document.getElementById(elementId);
+        element.textContent = ''; // ล้างข้อความเก่า
+
+        // ฟังก์ชันภายในสำหรับพิมพ์ทีละตัวอักษร
+        function type() {
+            if (!isInstantDisplay) {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // เมื่อพิมพ์ครบทุกตัวแล้ว ให้สลับสถานะ
+                    isInstantDisplay = !isInstantDisplay;
+                }
+            } else {
+            // ถ้าสถานะเป็นแสดงทันที ให้แสดงข้อความทั้งหมดทันที
+            element.textContent = text;
+            }
+        }
+        type();
+    }
+  </script>
+</body>
+</html>

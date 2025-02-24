@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Image</title>
+
+    <style>
+        .background {
+            src: "images/bg_1.png";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        .speaker {
+            position: absolute;
+            left: 50%;          /* เริ่มต้นที่ 50% ของความกว้างหน้าเว็บ */
+            bottom: 15%;
+            transform: translateX(-50%);  /* จัดให้อยู่ตรงกลาง โดยเลื่อนออกทางซ้ายครึ่งหนึ่งของความกว้าง element */
+            width: auto;
+            height: auto;
+            max-width: 70%;
+            max-height: 70%;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        .panel {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 15%;
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+            z-index: 1;
+            text-align: center ;
+        }
+
+        #description {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+        
+            font-size: 1.5em;
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <script>
+        // เปลี่ยนแหล่งที่มาของรูปภาพเมื่อโหลดหน้าเว็บ
+        window.onload = function() {
+            var backgroundImg = document.querySelector('.background');
+            backgroundImg.src = 'images/bg_1.png'; // เปลี่ยนแหล่งที่มาของรูปภาพ background
+            
+            var speakerImg = document.querySelector('.speaker');
+            speakerImg.src = 'images/cut_anime.png'; // เปลี่ยนแหล่งที่มาของรูปภาพ speaker
+        };
+    </script>
+</body>
+    
+    <img class="background" style="z-index: -1;">
+    <img class="speaker" id="speaker">
+
+    <script>
+
+        function moveSpeaker() {
+            const speakerImg = document.getElementById('speaker');
+            if (!speakerImg) {
+                console.error("ไม่พบ element ที่มี id 'speaker'");
+                return;
+            }
+            
+            // ลบค่า transform เพื่อให้สามารถปรับค่า left ได้โดยตรง
+            speakerImg.style.transform = 'none';
+            
+            // กำหนดตำแหน่งเริ่มต้นที่ 50%
+            let left = 40;
+            speakerImg.style.left = left + '%';
+            
+            // หน่วงเวลา 3 วินาทีก่อนเริ่มแอนิเมชัน
+            setTimeout(() => {
+                function animate() {
+                    if (left < 65) { // เคลื่อนย้ายจนถึงตำแหน่ง 65%
+                        left += 0.5; // เพิ่มค่า left ทีละ 0.9%
+                        speakerImg.style.left = left + '%';
+                        requestAnimationFrame(animate); // เรียก animate ใน frame ถัดไป
+                    }
+                }
+                animate();
+            }, 3000);
+        }
+
+
+
+
+        // Call the function to start moving the speaker image
+        window.onload = function() {
+            var backgroundImg = document.querySelector('.background');
+            backgroundImg.src = 'images/bg_1.png'; // เปลี่ยนแหล่งที่มาของรูปภาพ background
+            
+            var speakerImg = document.querySelector('.speaker');
+            speakerImg.src = 'images/cut_anime.png'; // เปลี่ยนแหล่งที่มาของรูปภาพ speaker
+
+            moveSpeaker(); // Start moving the speaker image
+        };
+    </script>
+    <div class="panel">
+        <p id="description" >This is the initial description.</p>
+    </div>
+
+</body>
+</html>

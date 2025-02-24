@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Page</title>
+</head>
+<body>
+    <h1>Welcome to the Demo Page</h1>
+    <p>This is a simple HTML demo page.</p>
+    <button onclick = "loadFileInFolder()"> Show File in Folder </button>
+    <div id="imgContainer"></div>
+
+    <script>
+
+
+let path = 'images/';
+const targetFileName = 'Alice';
+let pathImage;
+function loadFileInFolder() {
+    fetch(path)
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const items = Array.from(doc.querySelectorAll('a'))
+                .map(a => a.textContent.trim());
+            
+            const fileNames = items
+                .filter(item => item.match(/\.(png|jpg|jpeg)/i))
+                .map(item => {
+                    const match = item.match(/(.*?\.(png|jpg|jpeg))/i);
+                    return match ? match[1] : item;
+                });
+            
+            const matchedFile = fileNames.find(fileName => {
+                const baseName = fileName.replace(/\.(png|jpg|jpeg)$/i, '');
+                return baseName.toLowerCase() === targetFileName.toLowerCase();
+            });
+            
+            if (matchedFile) {
+                pathImage = path + matchedFile
+                console.log(pathImage);
+                return;
+            } else {
+                console.log("ไม่พบไฟล์ที่ตรงกับชื่อที่ระบุ");
+            }
+        })    
+}
+
+
+    </script>
+</body>
+</html>
