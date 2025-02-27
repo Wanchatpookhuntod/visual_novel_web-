@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Page</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to the Demo Page</h1>
+    </header>
+    <main>
+        <canvas id="myCanvas" width="500" height="500" style="border:1px solid #000000;"></canvas>
+        <script>
+            let canvas = document.getElementById("myCanvas");
+            let ctx = canvas.getContext("2d");
+            let x = canvas.width / 2;
+            let y = canvas.height / 2;
+            let radius = 20;
+            let speed = 20;
+            let dx = 0;
+            let dy = 0;
+
+            let buttonX = 50;
+            let buttonY = 10;
+            let buttonWidth = 100;
+            let buttonHeight = 50;
+
+            function drawButton() {
+                ctx.beginPath();
+                ctx.rect(buttonX, buttonY, buttonWidth, buttonHeight);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            canvas.addEventListener("click", function(event) {
+                let rect = canvas.getBoundingClientRect();
+                let mouseX = event.clientX - rect.left;
+                let mouseY = event.clientY - rect.top;
+
+                if (mouseX > buttonX && mouseX < buttonX + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight) {
+                    alert("Button clicked!");
+                }
+            });
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawButton();
+                drawCircle();
+                
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+
+            function drawCircle() {
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function updatePosition() {
+                x += dx;
+                y += dy;
+                drawCircle();
+                requestAnimationFrame(updatePosition);
+            }
+
+            document.addEventListener("keydown", function(event) {
+                if (event.key === "ArrowUp") {
+                    dy = -speed;
+                } else if (event.key === "ArrowDown") {
+                    dy = speed;
+                } else if (event.key === "ArrowLeft") {
+                    dx = -speed;
+                } else if (event.key === "ArrowRight") {
+                    dx = speed;
+                }
+            });
+
+            document.addEventListener("keyup", function(event) {
+                if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                    dy = 0;
+                } else if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                    dx = 0;
+                }
+            });
+
+            drawCircle();
+            updatePosition();
+        </script>
+        <section>
+            <h2>Section Title</h2>
+            <p>This is a paragraph in the section.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Demo Page</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,41 @@
+converstions:
+    scene_1:
+        title: day 1
+        bg: room
+        dialog:
+          - speaker: Alice
+            text: Hello, My name is Alice.
+            emotion: happy
+    
+          - speaker: Bob
+            text: Hi, Alice. I am Bob.
+            emotion: sad
+    
+          - speaker: Alice
+            text: Hi, Bob. Why are you sad?
+            emotion: happy
+    
+          - speaker: Bob
+            text: I am sad because I lost my job.
+            emotion: sad
+    
+          - speaker: Alice
+            text: I am sorry to hear that. I hope you find a new job soon.
+            emotion: happy
+    
+          - speaker: Bob
+            text: Thank you, Alice. I hope so too.
+            emotion: sad
+            location: home
+    
+          - speaker: Alice
+            text: I have to go now. Good
+
+    scene_2:
+        title: day 2
+        bg: school
+        dialog:
+          - speaker: Teacher
+            text: Hello
+          - speaker: kateryna
+            text: Hi, How are you?

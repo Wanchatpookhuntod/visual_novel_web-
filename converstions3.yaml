@@ -1,0 +1,17 @@
+converstions:
+  - scene: scene_1
+    title: day 1
+    bg: room
+    dialog:
+      - speaker: Kateryna
+        text: Hello
+      - speaker: Max
+        message: Hi
+  - scene: scene_2
+    title: day 2
+    bg: school
+    dialog:
+      - speaker: Teacher
+        text: Hello
+      - speaker: kateryna
+        text: Hi, How are you?

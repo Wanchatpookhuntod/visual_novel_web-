@@ -1,0 +1,51 @@
+scene_1:
+  titel: day 1
+  type: dialog
+  characters:
+    - Cat
+    - Max
+    - Teacher
+  bg: room
+  audio: room.mp3
+  next_scene: scene_2
+  dialog:
+    - speaker: Teacher
+      text: วันนี้เราจะพูดถึงเจ้าชายน้อย
+      emotion: neutral
+      sound_speak: teacher_intro.mp3
+    - speaker: Cat
+      text: เจ้าชายน้อยคือใคร
+      emotion: curious
+      sound_speak: cat_question.mp3
+    - speaker: Teacher
+      text: เขาเป็นตัวละครจากหนังสือที่มีชื่อเสียงโดย อองตวน เดอ แซงเตกซูเปรี
+      emotion: neutral
+      sound_speak: teacher_explain.mp3
+    - speaker: Max
+      text: เรื่องราวเกี่ยวกับอะไร
+      emotion: curious
+      sound_speak: max_question.mp3
+    - speaker: Teacher
+      text: เป็นเรื่องเกี่ยวกับเจ้าชายหนุ่มที่เดินทางจากดาวเคราะห์หนึ่งไปยังอีกดาวเคราะห์หนึ่ง
+      emotion: neutral
+      sound_speak: teacher_story.mp3
+    - speaker: Cat
+      text: ฟังดูน่าสนใจ!
+      emotion: excited
+      sound_speak: cat_excited.mp3
+    - speaker: Max
+      text: เขาเรียนรู้อะไรบ้างในการเดินทางของเขา
+      emotion: curious
+      sound_speak: max_learn.mp3
+    - speaker: Teacher
+      text: เขาเรียนรู้เกี่ยวกับความรัก ความเหงา และมิตรภาพ
+      emotion: neutral
+      sound_speak: teacher_lessons.mp3
+    - speaker: Cat
+      text: ฉันอยากอ่านหนังสือเล่มนั้น!
+      emotion: happy
+      sound_speak: cat_want_read.mp3
+    - speaker: Max
+      text: ฉันด้วย!
+      emotion: happy
+      sound_speak: max_agree.mp3
