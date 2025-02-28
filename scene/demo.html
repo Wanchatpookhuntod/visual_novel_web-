@@ -1,54 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Page</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Visual Noval Format</title>
+	<!-- ลิงก์ไฟล์ CSS ภายนอก -->
+	<link rel="stylesheet" href="style.css">
+	<!-- โหลดไลบรารี js-yaml -->
+	<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+	<!-- เรียกใช้ไฟล์ JavaScript ภายนอก -->
 </head>
+
 <body>
-    <h1>Welcome to the Demo Page</h1>
-    <p>This is a simple HTML demo page.</p>
-    <button onclick = "loadFileInFolder()"> Show File in Folder </button>
-    <div id="imgContainer"></div>
+	<div class="background"></div>
+	<img src="" class="speaker" id="speaker" />
+	<div class="panel">
+		<p id="description"></p>
+		<!-- <button class="button" onclick="clickBTN()">Skip >> </button> -->
+        <button id="buttonNext" class="button"> ต่อไป >> </button>
+        <button id="buttonSkip" class="button" style="display:none;">ข้าม >></button>
+	</div>
+
 
     <script>
+        let currentIndex = 0;
+        let dialogData = [];
+        let scenes;
+        let dialogs;
+        let idx = 0;
+        let skip = false;
 
-
-let path = 'images/';
-const targetFileName = 'Alice';
-let pathImage;
-function loadFileInFolder() {
-    fetch(path)
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const items = Array.from(doc.querySelectorAll('a'))
-                .map(a => a.textContent.trim());
-            
-            const fileNames = items
-                .filter(item => item.match(/\.(png|jpg|jpeg)/i))
-                .map(item => {
-                    const match = item.match(/(.*?\.(png|jpg|jpeg))/i);
-                    return match ? match[1] : item;
-                });
-            
-            const matchedFile = fileNames.find(fileName => {
-                const baseName = fileName.replace(/\.(png|jpg|jpeg)$/i, '');
-                return baseName.toLowerCase() === targetFileName.toLowerCase();
+        window.onload = function() {
+            fetch("scripts/scene_scripts.yaml")
+            .then(response => response.text())
+            .then(yamlString => {
+                scenes = jsyaml.load(yamlString);
+                dialogs = scenes.room.dialog;
+                start();
             });
-            
-            if (matchedFile) {
-                pathImage = path + matchedFile
-                console.log(pathImage);
-                return;
-            } else {
-                console.log("ไม่พบไฟล์ที่ตรงกับชื่อที่ระบุ");
+        }       
+
+        function start() {
+
+            function textDialog(){
+                const element_disc =  document.getElementById("description");
+                const textSart = dialogs[idx].text;
+                let textNumber = 0;
+
+                element_disc.textContent = "";
+                function typingtext() {
+                    if (textNumber < textSart.length) {
+                        element_disc.textContent += textSart.charAt(textNumber);
+                        textNumber++;
+                        setTimeout(typingtext, 50);
+                    }
+                }
+                typingtext();
             }
-        })    
-}
+            
+
+            function updateSpeaker(image) {
+                if (dialogs[idx].hasOwnProperty('speaker')) {
+                    const imagePath = `images/${image}.png`;
+                    const speakerElement = document.getElementById('speaker');
+                    speakerElement.src = imagePath;
+
+                  
+                    moveSpeaker(speakerElement, 40, 0.8, 60);
+                } else {
+                    const speakerElement = document.getElementById('speaker');
+                    speakerElement.src = '';
+                    speakerElement.style.display = 'none';
+                }
+            }
+
+            textDialog();
+            updateSpeaker(dialogs[idx].speaker);
+
+        }
+
+        document.getElementById("buttonSkip").addEventListener("click", btnSkip);
+        document.getElementById("buttonNext").addEventListener("click", btnNext);
+
+        function btnSkip() {
+            toggleButtonDisplay("buttonSkip", "buttonNext");
+            console.log(skip)
+            skip = !skip;
+        }
+
+        function btnNext() {
+            toggleButtonDisplay("buttonNext", "buttonSkip");
+            idx++;
+            console.log(dialogs[idx].text)
+            changeText(dialogs[idx].text, "description");
+            updateSpeakerImage(dialogs[idx].speaker);
+
+
+            
+        
+            
+        }
+
+        function toggleButtonDisplay(buttonId1, buttonId2) {
+            const button1 = document.getElementById(buttonId1);
+            const button2 = document.getElementById(buttonId2);
+            if (button1.style.display === "none") {
+                button1.style.display = "block";
+                button2.style.display = "none";
+            } else {
+                button1.style.display = "none";
+                button2.style.display = "block";
+            }
+        }
+
+        function changeText(text, id){
+            let textNumber = 0;
+            console
+            const element = document.getElementById(id)
+
+            element.textContent = "";
+
+            function typingtext() {
+
+                if (skip) {
+                    element.textContent = text;
+                    skip = !skip;
+                    return;
+                } else {
+                    if (textNumber < text.length) {
+                        element.textContent += text.charAt(textNumber);
+                        textNumber++;
+                        setTimeout(typingtext, 50);
+                    } else {
+                        console.log("end fade ......")
+                        resetText();
+                    }
+                }
+            }
+            typingtext();
+        }
+
+        function resetText() {
+            toggleButtonDisplay("buttonNext", "buttonSkip");
+            changeText(dialogs[idx].text, "description");
+            skip = !skip;
+        }
+
+
+        function updateSpeakerImage(newSrc) {
+            const imagePath = `images/${newSrc}.png`;
+            const speakerElement = document.getElementById('speaker');
+            filpImage(speakerElement, idx);
+            speakerElement.src = imagePath;
+            fadeInImage(speakerElement);
+            
+        }
+
+
+        function fadeInImage(element, duration = 1000) {
+            element.style.opacity = 0;
+            element.style.display = 'block';
+
+            let opacity = 0;
+            const interval = 50;
+            const increment = interval / duration;
+
+            function fade() {
+                opacity += increment;
+                if (opacity <= 1) {
+                    element.style.opacity = opacity;
+                    setTimeout(fade, interval);
+                } else {
+                    element.style.opacity = 1;
+                }
+            }
+            fade();
+        }
+
+        function moveSpeaker(id, start=0, speed=0.5, limit = 50) {
+            const speakerImg = id;
+
+            // const speakerElement = document.getElementById('speaker');
+            const initialPosition = speakerImg.getBoundingClientRect();
+            console.log("Initial Position:", initialPosition);
+
+            if (!speakerImg) {
+            console.error("ไม่พบ element ที่มี id 'speaker'");
+            return;
+            }
+            
+            // ลบค่า transform เพื่อให้สามารถปรับค่า left ได้โดยตรง
+            speakerImg.style.transform = initialPosition;
+            
+            // กำหนดตำแหน่งเริ่มต้นที่ 50%
+            let left = start;
+            speakerImg.style.left = left + '%';
+
+            fadeInImage(speakerImg)
+
+            // หน่วงเวลา 3 วินาทีก่อนเริ่มแอนิเมชัน
+            setTimeout(() => {
+            function animate() {
+                if (left < limit) { // เคลื่อนย้ายจนถึงตำแหน่ง 65%
+                left += speed; // เพิ่มค่า left ทีละ 0.5%
+                speakerImg.style.left = left + '%';
+                requestAnimationFrame(animate); // เรียก animate ใน frame ถัดไป
+                }
+            }
+            animate();
+            }, 3000);
+        } 
+
+
+        function fadeInImage(element, duration = 1000) {
+            element.style.opacity = 0;
+            element.style.display = 'block';
+
+            let opacity = 0;
+            const interval = 50;
+            const increment = interval / duration;
+
+            function fade() {
+                opacity += increment;
+                if (opacity <= 1) {
+                    element.style.opacity = opacity;
+                    setTimeout(fade, interval);
+                } else {
+                    element.style.opacity = 1;
+                }
+            }
+            fade();
+        }
+
+
+
+        function filpImage(speakerElement, idx) {
+            // ถ้าตำแหน่งข้อความเป็นเลขคี่ ให้พลิกภาพไปทางซ้าย
+            if (idx % 2 == 1) {
+                speakerElement.style.transform = "scaleX(-1)";
+                speakerElement.style.left = "3%";
+                console.log("flip left")
+            } else {
+                // ถ้าตำแหน่งข้อความเป็นเลขคู่ ให้พลิกภาพไปทางขวา
+                speakerElement.style.transform = "scaleX(1)";
+                speakerElement.style.left = "auto";
+                speakerElement.style.right = "3%";
+                console.log("flip right")
+            }
+        }
 
 
     </script>
+
+	
 </body>
+
 </html>
+
