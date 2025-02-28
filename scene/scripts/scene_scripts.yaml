@@ -9,43 +9,95 @@ scene_1:
   audio: room.mp3
   next_scene: scene_2
   dialog:
-    - speaker: Teacher
+    - speaker: Alice
       text: วันนี้เราจะพูดถึงเจ้าชายน้อย
       emotion: neutral
       sound_speak: teacher_intro.mp3
-    - speaker: Cat
+    - speaker: Bob
       text: เจ้าชายน้อยคือใคร
       emotion: curious
       sound_speak: cat_question.mp3
-    - speaker: Teacher
+    - speaker: Alice
       text: เขาเป็นตัวละครจากหนังสือที่มีชื่อเสียงโดย อองตวน เดอ แซงเตกซูเปรี
       emotion: neutral
       sound_speak: teacher_explain.mp3
-    - speaker: Max
+    - speaker: Bob
       text: เรื่องราวเกี่ยวกับอะไร
       emotion: curious
       sound_speak: max_question.mp3
-    - speaker: Teacher
+    - speaker: Alice
       text: เป็นเรื่องเกี่ยวกับเจ้าชายหนุ่มที่เดินทางจากดาวเคราะห์หนึ่งไปยังอีกดาวเคราะห์หนึ่ง
       emotion: neutral
       sound_speak: teacher_story.mp3
-    - speaker: Cat
+    - speaker: Bob
       text: ฟังดูน่าสนใจ!
       emotion: excited
       sound_speak: cat_excited.mp3
-    - speaker: Max
+    - speaker: Alice
       text: เขาเรียนรู้อะไรบ้างในการเดินทางของเขา
       emotion: curious
       sound_speak: max_learn.mp3
-    - speaker: Teacher
+    - speaker: Bob
       text: เขาเรียนรู้เกี่ยวกับความรัก ความเหงา และมิตรภาพ
       emotion: neutral
       sound_speak: teacher_lessons.mp3
-    - speaker: Cat
+    - speaker: Alice
       text: ฉันอยากอ่านหนังสือเล่มนั้น!
       emotion: happy
       sound_speak: cat_want_read.mp3
-    - speaker: Max
+    - speaker: Bob
       text: ฉันด้วย!
       emotion: happy
       sound_speak: max_agree.mp3
+
+scene_2:
+  titel: day 2
+  type: dialog
+  characters:
+    - Cat
+    - Max
+    - Teacher
+  bg: park
+  audio: park.mp3
+  next_scene: scene_1
+  dialog:
+    - speaker: Teacher
+      text: วันนี้เราจะไปเดินเล่นในสวนกัน
+      emotion: happy
+      sound_speak: teacher_walk.mp3
+    - speaker: Cat
+      text: ฉันชอบสวนนี้มาก!
+      emotion: excited
+      sound_speak: cat_like_park.mp3
+    - speaker: Max
+      text: ฉันด้วย มันสวยงามมาก
+      emotion: happy
+      sound_speak: max_agree_park.mp3
+    - speaker: Teacher
+      text: เรามาพูดถึงธรรมชาติกันเถอะ
+      emotion: neutral
+      sound_speak: teacher_nature.mp3
+    - speaker: Cat
+      text: ธรรมชาติสำคัญอย่างไร
+      emotion: curious
+      sound_speak: cat_question_nature.mp3
+    - speaker: Teacher
+      text: ธรรมชาติเป็นแหล่งที่มาของชีวิตและความงาม
+      emotion: neutral
+      sound_speak: teacher_explain_nature.mp3
+    - speaker: Max
+      text: เราควรดูแลธรรมชาติอย่างไร
+      emotion: curious
+      sound_speak: max_question_care.mp3
+    - speaker: Teacher
+      text: เราควรรักษาความสะอาดและปลูกต้นไม้
+      emotion: neutral
+      sound_speak: teacher_care_nature.mp3
+    - speaker: Cat
+      text: ฉันจะช่วยปลูกต้นไม้!
+      emotion: happy
+      sound_speak: cat_help_plant.mp3
+    - speaker: Max
+      text: ฉันด้วย!
+      emotion: happy
+      sound_speak: max_agree_plant.mp3

@@ -38,7 +38,7 @@ fetch(yamlPath)
     .catch(error => console.error('Error loading YAML file:', error));
 
 // ฟังก์ชันสำหรับเปลี่ยนข้อความในบทสนทนาเมื่อมีการคลิกปุ่ม
-function changeDescription() {
+function changeDialog() {
     // ตรวจสอบว่ามีข้อความถัดไปในบทสนทนาของฉากปัจจุบันหรือไม่
     if (sceneData[currentScene].dialog.length !== (currentTextIndex + 1)) {
         currentTextIndex++;
