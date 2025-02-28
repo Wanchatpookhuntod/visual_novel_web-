@@ -1,5 +1,4 @@
-scene_1:
-  titel: day 1
+room:
   type: dialog
   characters:
     - Cat
@@ -7,7 +6,7 @@ scene_1:
     - Teacher
   bg: room
   audio: room.mp3
-  next_scene: scene_2
+  next_scene: forest
   dialog:
     - speaker: Teacher
       text: วันนี้เราจะพูดถึงเจ้าชายน้อย
@@ -49,3 +48,21 @@ scene_1:
       text: ฉันด้วย!
       emotion: happy
       sound_speak: max_agree.mp3
+
+forest:
+  type: dialog
+  characters:
+    - Cat
+    - Max
+    - Teacher
+  bg: forest
+  audio: forest.mp3
+  next_scene: scene_3
+  dialog:
+    - speaker: Teacher
+      text: วันนี้เราจะพูดถึงเจ้าชายน้อย
+      emotion: neutral
+      sound_speak: teacher_intro.mp3
+    - speaker: Cat
+      text: เจ้าชายน้อยคือใคร
+      emotion: curious

@@ -31,6 +31,7 @@ fetch(yamlPath)
         const firstSceneDialog = sceneData[currentScene].dialog;
         const firstText = firstSceneDialog[currentTextIndex].text;
         const firstSpeaker = firstSceneDialog[currentTextIndex].speaker;
+        
         typeWriter(firstText, 'description', 50);
         changeSpeakerImage(firstSpeaker);
 
