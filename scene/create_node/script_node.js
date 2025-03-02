@@ -190,108 +190,37 @@ document.getElementById("saveNodeButton").addEventListener("click", () => {
 
 let formCount = 0;
 document.getElementById("addTextButton").addEventListener("click", () => {
-    // const adTextForm = document.createElement("div");
-    // adTextForm.className = "container";
-    // adTextForm.style.marginTop = "5px";
+    const adTextForm = document.createElement("div");
+    adTextForm.className = "container";
+    adTextForm.style.marginTop = "5px";
 
-    // const speakerDiv = document.createElement("div");
-    // const speakerInput = document.createElement("input");
-    // speakerInput.type = "text";
-    // speakerInput.placeholder = "speaker";
-    // speakerDiv.appendChild(speakerInput);
+    const speakerDiv = document.createElement("div");
+    const speakerInput = document.createElement("input");
+    speakerInput.type = "text";
+    speakerInput.placeholder = "speaker";
+    speakerDiv.appendChild(speakerInput);
 
-    // const textDiv = document.createElement("div");
-    // const textarea = document.createElement("textarea");
-    // textarea.type = "text";
-    // textarea.placeholder = "Text dialog";
-    // textDiv.appendChild(textarea);
+    const textDiv = document.createElement("div");
+    const textarea = document.createElement("textarea");
+    textarea.type = "text";
+    textarea.placeholder = "Text dialog";
+    textDiv.appendChild(textarea);
 
-    // const removeDiv = document.createElement("div");
-    // const removeButton = document.createElement("button");
-    // removeDiv.appendChild(removeButton);
-    // removeButton.className = "removeButton";
-    // removeButton.innerHTML = "remove";
+    const removeDiv = document.createElement("div");
+    const removeButton = document.createElement("button");
+    removeDiv.appendChild(removeButton);
+    removeButton.className = "removeButton";
+    removeButton.innerHTML = "remove";
 
-    // removeButton.addEventListener("click", () => {
-    //     adTextForm.remove();
-    // });
-
-
-    // adTextForm.appendChild(speakerDiv);
-    // adTextForm.appendChild(textDiv);
-    // adTextForm.appendChild(removeDiv);
-
-    // document.getElementById("nodeForm").insertBefore(adTextForm, document.getElementById("btnForm"));
-
-
-
-    formCount++;
-    const form = document.createElement('form');
-
-    const table = document.createElement('table');
-    table.style.borderSpacing = '10px';
-    table.style.width = '100%';
-    table.style.border = '1px solid #e3e3e3';
-    table.style.marginTop = '1px';
-    table.style.backgroundColor = '#f9f9f9';
-
-    const row = document.createElement('tr');
-
-    const labelCell = document.createElement('td');
-    labelCell.style.width = '5%';
-    labelCell.style.height = '100%';
-    const label = document.createElement('label');
-    label.style.width = '100%';
-    label.style.height = '50%';
-    label.style.margin = 'auto';
-    label.style.fontSize = '1em';
-    label.textContent = `script ${formCount}`;
-    labelCell.appendChild(label);
-    row.appendChild(labelCell);
-
-    const inputCell1 = document.createElement('td');
-    inputCell1.style.width = '25%';
-    inputCell1.style.height = '100%';
-    const input1 = document.createElement('input');
-    input1.style.width = '100%';
-    input1.style.height = '50%';
-    input1.style.margin = 'auto';
-    input1.type = 'text';
-    input1.id = 'field2';
-    input1.name = 'field2';
-    inputCell1.appendChild(input1);
-    row.appendChild(inputCell1);
-
-    const inputCell2 = document.createElement('td');
-    inputCell2.style.width = '65%';
-    inputCell2.style.height = '100%';
-    const input2 = document.createElement('input');
-    input2.type = 'text';
-    input2.style.margin = 'auto';
-    input2.style.width = '100%';
-    inputCell2.appendChild(input2);
-    row.appendChild(inputCell2);
-
-    const buttonCell = document.createElement('td');
-    buttonCell.style.width = '5%';
-    buttonCell.style.height = '100%';
-    const buttonRemove = document.createElement('button');
-    buttonRemove.className = 'buttonRemove';
-    buttonRemove.style.width = '30px';
-    buttonRemove.style.height = '30px';
-    buttonRemove.style.backgroundColor = "#ff1f53";
-    buttonRemove.style.display = 'block';
-    buttonRemove.textContent = 'X';
-    buttonRemove.style.margin = 'auto';
-    
-    buttonCell.appendChild(buttonRemove);
-    row.appendChild(buttonCell);
-    buttonRemove.addEventListener('click', function () {
-        form.remove();
+    removeButton.addEventListener("click", () => {
+        adTextForm.remove();
     });
 
-    table.appendChild(row);
-    form.appendChild(table);
 
-    document.getElementById("nodeForm").insertBefore(form, document.getElementById("btnForm"));
+    adTextForm.appendChild(speakerDiv);
+    adTextForm.appendChild(textDiv);
+    adTextForm.appendChild(removeDiv);
+
+    document.getElementById("nodeForm").insertBefore(adTextForm, document.getElementById("btnForm"));
+
 });
