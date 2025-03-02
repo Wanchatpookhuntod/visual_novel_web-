@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual Novel Format</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    
+</head>
+<body>
+    <div class="background"></div>
+    <img src="" class="speaker" id="speaker" />
+    <div class="panel">
+        <p id="description"></p>
+        <button id="buttonNext" class="button" style="display: none">ต่อไป >></button>
+        <button id="buttonSkip" class="button" style="display: none">ข้าม >></button>
+    </div>
+
+    <div style="position: absolute; top: 0; left: 0; z-index: 10;">
+        <button id="buttonGoChoice">โหลดหน้าใหม่</button>
+    </div>
+
+    <script>
+        document.getElementById('buttonGoChoice').addEventListener('click', function() {
+            window.location.href = 'choice.html'; // Replace 'newpage.html' with the URL of the page you want to navigate to
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

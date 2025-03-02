@@ -1,0 +1,103 @@
+body,
+html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow: hidden;
+}
+
+.background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url('images/bg_1.png') no-repeat center center;
+	background-size: cover;
+    
+}
+
+
+.background_1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	/* background: url('images/bg_1.png') no-repeat center center; */
+	background-size: cover;
+    /* background-color: black; */
+    
+}
+
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        display: none;
+    }
+}
+
+.fadeOut {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1000%;
+    background-color: black;
+    z-index: 20;
+    background-size: cover;
+    animation: fadeOut 3s forwards; /* Apply fadeIn animation */
+}
+
+
+.transition {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1000%;
+    background-color: black;
+    z-index: 20;
+    background-size: cover;
+    
+}
+
+
+
+
+
+#button_choice {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 26%; 
+    height: auto;
+    margin: 0 auto;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#button_choice button {
+    
+    margin: 2% 2%;
+    background-color: #007BFF;
+    border: none;
+    color: #ffffff;
+    width: 100%;
+    height: 6vh;
+    z-index: 10;
+}
+
+#button_choice button:hover {
+    background-color: #0065d0;
+	/* outline: white solid 1px; */
+}
+
+#button_choice button:active {
+	background-color: #cee6ff7b;
+}

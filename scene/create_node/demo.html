@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Novel Demo</title>
+</head>
+
+<body>
+    <h1>Welcome to the Visual Novel Demo</h1>
+    <p>This is a demo scene for the visual novel.</p>
+    <p style="text-align: center; margin: auto;">
+        <button type="submit">Submit</button>
+        <button id="add" type="add">Add</button>
+    </p>
+
+    <form id="formContainer"></form>
+    <!-- <table style="margin: auto; border-spacing: 10px; width: 50%;">
+        <tr>
+            <td colspan="3"><label style="margin: auto;">script 1</label></td>
+        </tr>
+        <tr>
+            <td style="width: 20%; height: 100%;">
+                <input type="text" id="field2" name="field2" style="width: 100%;">
+            </td>
+            <td style="width: 75%; height: 100%;">
+                <input type="text" style="margin: auto; width: 100%;">
+            </td>
+            <td style="width: 5%; height: 100%;">
+                <button style="width: 100%; height: 100%; display: block;">x</button>
+            </td>
+        </tr>
+    </table> -->
+
+    <div id="addForm" style="width: 60%; margin: auto;"></div>
+
+    <script>
+        document.getElementById("add").addEventListener("click", function() {
+            // const formContainer = document.getElementById('formContainer');
+            const form = document.createElement('form');
+            form.id = 'dynamicForm';
+
+            const table = document.createElement('table');
+            table.style.margin = 'auto';
+            table.style.borderSpacing = '10px';
+            table.style.width = '50%';
+
+            const headerRow = document.createElement('tr');
+            const headerCell = document.createElement('td');
+            headerCell.colSpan = 3;
+            const label = document.createElement('label');
+            label.style.margin = 'auto';
+            label.textContent = 'script 1';
+            headerCell.appendChild(label);
+            headerRow.appendChild(headerCell);
+            table.appendChild(headerRow);
+
+            const inputRow = document.createElement('tr');
+
+            const inputCell1 = document.createElement('td');
+            inputCell1.style.width = '20%';
+            inputCell1.style.height = '100%';
+            const input1 = document.createElement('input');
+            input1.type = 'text';
+            input1.id = 'field2';
+            input1.name = 'field2';
+            input1.style.width = '100%';
+            inputCell1.appendChild(input1);
+            inputRow.appendChild(inputCell1);
+
+            const inputCell2 = document.createElement('td');
+            inputCell2.style.width = '75%';
+            inputCell2.style.height = '100%';
+            const input2 = document.createElement('input');
+            input2.type = 'text';
+            input2.style.margin = 'auto';
+            input2.style.width = '100%';
+            inputCell2.appendChild(input2);
+            inputRow.appendChild(inputCell2);
+
+            const buttonCell = document.createElement('td');
+            buttonCell.style.width = '5%';
+            buttonCell.style.height = '100%';
+            const button = document.createElement('button');
+            button.style.width = '100%';
+            button.style.height = '100%';
+            button.style.display = 'block';
+            button.textContent = 'x';
+            buttonCell.appendChild(button);
+            inputRow.appendChild(buttonCell);
+
+            table.appendChild(inputRow);
+            form.appendChild(table);
+            formContainer.appendChild(form);
+        });
+
+        let formCount = 0;
+        document.getElementById("add").addEventListener('click', function() {
+            const form = document.createElement('form');
+            formCount++;
+
+            const table = document.createElement('table');
+            table.style.borderSpacing = '10px';
+            table.style.width = '100%';
+            table.style.border = '1px solid #e3e3e3';
+            table.style.marginTop = '1px';
+            table.style.backgroundColor = '#f9f9f9';
+
+            const row = document.createElement('tr');
+
+            const labelCell = document.createElement('td');
+            const label = document.createElement('label');
+            label.style.width = '5%';
+            label.style.margin = 'auto';
+            label.style.height = '50%';
+            label.style.fontSize = '1em';
+            label.textContent = formCount;
+            labelCell.appendChild(label);
+            row.appendChild(labelCell);
+
+            const inputCell1 = document.createElement('td');
+            inputCell1.style.width = '25%';
+            inputCell1.style.height = '100%';
+            const input1 = document.createElement('input');
+            input1.type = 'text';
+            input1.id = 'field2';
+            input1.name = 'field2';
+            input1.style.width = '100%';
+            inputCell1.appendChild(input1);
+            row.appendChild(inputCell1);
+
+            const inputCell2 = document.createElement('td');
+            inputCell2.style.width = '65%';
+            inputCell2.style.height = '100%';
+            const input2 = document.createElement('input');
+            input2.type = 'text';
+            input2.style.margin = 'auto';
+            input2.style.width = '100%';
+            inputCell2.appendChild(input2);
+            row.appendChild(inputCell2);
+
+            const buttonCell = document.createElement('td');
+            buttonCell.style.width = '5%';
+            buttonCell.style.height = '100%';
+            const button = document.createElement('button');
+            button.style.width = '100%';
+            button.style.height = '100%';
+            button.style.display = 'block';
+            button.textContent = 'x';
+            buttonCell.appendChild(button);
+            row.appendChild(buttonCell);
+
+            table.appendChild(row);
+            form.appendChild(table);
+            document.getElementById('addForm').appendChild(form);
+        });
+
+    </script>
+
+    
+
+    
+</body>
+
+</html>

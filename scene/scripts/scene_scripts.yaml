@@ -6,7 +6,7 @@ room:
     - Teacher
   bg: room
   audio: room.mp3
-  next_scene: forest
+  next_scene: farm
   dialog:
     - speaker: Alice
       text: วันนี้เราจะพูดถึงเจ้าชายน้อย
@@ -42,6 +42,57 @@ room:
       sound_speak: teacher_lessons.mp3
     - speaker: Alice
       text: ฉันอยากอ่านหนังสือเล่มนั้น!
+      emotion: happy
+      sound_speak: cat_want_read.mp3
+    - speaker: Bob
+      text: ฉันด้วย!
+      emotion: happy
+      sound_speak: max_agree.mp3
+
+farm:
+  type: choice
+  characters:
+    - Cat
+    - Max
+    - Teacher
+  bg: forest
+  audio: forest.mp3
+  next_scene: room
+  dialog:
+    - speaker: Alice
+      text: วันนี้เราจะพูดถึงนิทานเรื่อง Animal Farm
+      emotion: neutral
+      sound_speak: teacher_intro.mp3
+    - speaker: Bob
+      text: นิทานเรื่อง Animal Farm คืออะไร
+      emotion: curious
+      sound_speak: cat_question.mp3
+    - speaker: Alice
+      text: มันเป็นเรื่องราวเกี่ยวกับสัตว์ในฟาร์มที่ลุกขึ้นมาต่อต้านเจ้าของฟาร์ม
+      emotion: neutral
+      sound_speak: teacher_explain.mp3
+    - speaker: Bob
+      text: เรื่องราวเป็นอย่างไร
+      emotion: curious
+      sound_speak: max_question.mp3
+    - speaker: Alice
+      text: สัตว์เหล่านี้พยายามสร้างสังคมที่เท่าเทียมกัน แต่สุดท้ายกลับเกิดความขัดแย้งและการทรยศ
+      emotion: neutral
+      sound_speak: teacher_story.mp3
+    - speaker: Bob
+      text: ฟังดูน่าสนใจ!
+      emotion: excited
+      sound_speak: cat_excited.mp3
+    - speaker: Alice
+      text: พวกเขาเรียนรู้อะไรบ้างในการผจญภัยของพวกเขา
+      emotion: curious
+      sound_speak: max_learn.mp3
+    - speaker: Bob
+      text: พวกเขาเรียนรู้เกี่ยวกับอำนาจ ความโลภ และการทรยศ
+      emotion: neutral
+      sound_speak: teacher_lessons.mp3
+    - speaker: Alice
+      text: ฉันอยากฟังนิทานเรื่องนั้น!
       emotion: happy
       sound_speak: cat_want_read.mp3
     - speaker: Bob

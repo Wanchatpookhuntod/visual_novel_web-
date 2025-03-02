@@ -2,26 +2,27 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Visual Noval Format</title>
-	<!-- ลิงก์ไฟล์ CSS ภายนอก -->
-	<link rel="stylesheet" href="style.css">
-	<!-- โหลดไลบรารี js-yaml -->
-	<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-	<!-- เรียกใช้ไฟล์ JavaScript ภายนอก -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual Noval Format</title>
+    <!-- ลิงก์ไฟล์ CSS ภายนอก -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- โหลดไลบรารี js-yaml -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <!-- เรียกใช้ไฟล์ JavaScript ภายนอก -->
 </head>
 
 <body>
-	<div class="background"></div>
-	<img src="" class="speaker" id="speaker" />
-	<div class="panel">
-		<p id="description"></p>
-		<!-- <button class="button" onclick="clickBTN()">Skip >> </button> -->
-        <button id="buttonNext" class="button"> ต่อไป >> </button>
-        <button id="buttonSkip" class="button" style="display:none;">ข้าม >></button>
-	</div>
-
+    <div class="background"></div>
+    <img src="" class="speaker" id="speaker" />
+    <div class="panel">
+        <p id="description"></p>
+        <!-- <button class="button" onclick="clickBTN()">Skip >> </button> -->
+        <button id="buttonNext" class="button">ต่อไป >></button>
+        <button id="buttonSkip" class="button" style="display: none">
+            ข้าม >>
+        </button>
+    </div>
 
     <script>
         let currentIndex = 0;
@@ -31,20 +32,19 @@
         let idx = 0;
         let skip = false;
 
-        window.onload = function() {
+        window.onload = function () {
             fetch("scripts/scene_scripts.yaml")
-            .then(response => response.text())
-            .then(yamlString => {
-                scenes = jsyaml.load(yamlString);
-                dialogs = scenes.room.dialog;
-                start();
-            });
-        }       
+                .then((response) => response.text())
+                .then((yamlString) => {
+                    scenes = jsyaml.load(yamlString);
+                    dialogs = scenes.room.dialog;
+                    start();
+                });
+        };
 
         function start() {
-
-            function textDialog(){
-                const element_disc =  document.getElementById("description");
+            function textDialog() {
+                const element_disc = document.getElementById("description");
                 const textSart = dialogs[idx].text;
                 let textNumber = 0;
 
@@ -58,26 +58,23 @@
                 }
                 typingtext();
             }
-            
 
             function updateSpeaker(image) {
-                if (dialogs[idx].hasOwnProperty('speaker')) {
+                if (dialogs[idx].hasOwnProperty("speaker")) {
                     const imagePath = `images/${image}.png`;
-                    const speakerElement = document.getElementById('speaker');
+                    const speakerElement = document.getElementById("speaker");
                     speakerElement.src = imagePath;
 
-                  
                     moveSpeaker(speakerElement, 40, 0.8, 60);
                 } else {
-                    const speakerElement = document.getElementById('speaker');
-                    speakerElement.src = '';
-                    speakerElement.style.display = 'none';
+                    const speakerElement = document.getElementById("speaker");
+                    speakerElement.src = "";
+                    speakerElement.style.display = "none";
                 }
             }
 
             textDialog();
             updateSpeaker(dialogs[idx].speaker);
-
         }
 
         document.getElementById("buttonSkip").addEventListener("click", btnSkip);
@@ -85,21 +82,16 @@
 
         function btnSkip() {
             toggleButtonDisplay("buttonSkip", "buttonNext");
-            console.log(skip)
+            console.log(skip);
             skip = !skip;
         }
 
         function btnNext() {
             toggleButtonDisplay("buttonNext", "buttonSkip");
             idx++;
-            console.log(dialogs[idx].text)
+            console.log(dialogs[idx].text);
             changeText(dialogs[idx].text, "description");
             updateSpeakerImage(dialogs[idx].speaker);
-
-
-            
-        
-            
         }
 
         function toggleButtonDisplay(buttonId1, buttonId2) {
@@ -114,15 +106,14 @@
             }
         }
 
-        function changeText(text, id){
+        function changeText(text, id) {
             let textNumber = 0;
-            console
-            const element = document.getElementById(id)
+            console;
+            const element = document.getElementById(id);
 
             element.textContent = "";
 
             function typingtext() {
-
                 if (skip) {
                     element.textContent = text;
                     skip = !skip;
@@ -133,7 +124,7 @@
                         textNumber++;
                         setTimeout(typingtext, 50);
                     } else {
-                        console.log("end fade ......")
+                        console.log("end fade ......");
                         resetText();
                     }
                 }
@@ -147,20 +138,17 @@
             skip = !skip;
         }
 
-
         function updateSpeakerImage(newSrc) {
             const imagePath = `images/${newSrc}.png`;
-            const speakerElement = document.getElementById('speaker');
+            const speakerElement = document.getElementById("speaker");
             filpImage(speakerElement, idx);
             speakerElement.src = imagePath;
             fadeInImage(speakerElement);
-            
         }
-
 
         function fadeInImage(element, duration = 1000) {
             element.style.opacity = 0;
-            element.style.display = 'block';
+            element.style.display = "block";
 
             let opacity = 0;
             const interval = 50;
@@ -178,7 +166,7 @@
             fade();
         }
 
-        function moveSpeaker(id, start=0, speed=0.5, limit = 50) {
+        function moveSpeaker(id, start = 0, speed = 0.5, limit = 50) {
             const speakerImg = id;
 
             // const speakerElement = document.getElementById('speaker');
@@ -186,36 +174,36 @@
             console.log("Initial Position:", initialPosition);
 
             if (!speakerImg) {
-            console.error("ไม่พบ element ที่มี id 'speaker'");
-            return;
+                console.error("ไม่พบ element ที่มี id 'speaker'");
+                return;
             }
-            
+
             // ลบค่า transform เพื่อให้สามารถปรับค่า left ได้โดยตรง
             speakerImg.style.transform = initialPosition;
-            
+
             // กำหนดตำแหน่งเริ่มต้นที่ 50%
             let left = start;
-            speakerImg.style.left = left + '%';
+            speakerImg.style.left = left + "%";
 
-            fadeInImage(speakerImg)
+            fadeInImage(speakerImg);
 
             // หน่วงเวลา 3 วินาทีก่อนเริ่มแอนิเมชัน
             setTimeout(() => {
-            function animate() {
-                if (left < limit) { // เคลื่อนย้ายจนถึงตำแหน่ง 65%
-                left += speed; // เพิ่มค่า left ทีละ 0.5%
-                speakerImg.style.left = left + '%';
-                requestAnimationFrame(animate); // เรียก animate ใน frame ถัดไป
+                function animate() {
+                    if (left < limit) {
+                        // เคลื่อนย้ายจนถึงตำแหน่ง 65%
+                        left += speed; // เพิ่มค่า left ทีละ 0.5%
+                        speakerImg.style.left = left + "%";
+                        requestAnimationFrame(animate); // เรียก animate ใน frame ถัดไป
+                    }
                 }
-            }
-            animate();
+                animate();
             }, 3000);
-        } 
-
+        }
 
         function fadeInImage(element, duration = 1000) {
             element.style.opacity = 0;
-            element.style.display = 'block';
+            element.style.display = "block";
 
             let opacity = 0;
             const interval = 50;
@@ -233,28 +221,21 @@
             fade();
         }
 
-
-
         function filpImage(speakerElement, idx) {
             // ถ้าตำแหน่งข้อความเป็นเลขคี่ ให้พลิกภาพไปทางซ้าย
             if (idx % 2 == 1) {
                 speakerElement.style.transform = "scaleX(-1)";
                 speakerElement.style.left = "3%";
-                console.log("flip left")
+                console.log("flip left");
             } else {
                 // ถ้าตำแหน่งข้อความเป็นเลขคู่ ให้พลิกภาพไปทางขวา
                 speakerElement.style.transform = "scaleX(1)";
                 speakerElement.style.left = "auto";
                 speakerElement.style.right = "3%";
-                console.log("flip right")
+                console.log("flip right");
             }
         }
-
-
     </script>
-
-	
 </body>
 
 </html>
-

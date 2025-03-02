@@ -6,6 +6,7 @@ let currentDialogIndex = 0;
 let isInstantDisplay = false; 
 let currentScene;
 
+
 fetch(yamlPath)
     .then(response => response.text())
     .then(yamlString => {
