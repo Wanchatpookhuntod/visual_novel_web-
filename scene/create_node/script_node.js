@@ -16,6 +16,8 @@ let selectedOutput = null;
 let tempConnection = null;
 let isDragging = false;
 let selectedNode = null;
+let maxX = 0;
+let maxY = 0;
 
 function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
     ctx.beginPath();
@@ -57,6 +59,12 @@ function draw() {
         ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         ctx.stroke();
+
+        // วาดวงกลมที่ปลายเส้นเชื่อมต่อ
+        ctx.beginPath();
+        ctx.arc(to.x - 5, to.y + to.height / 2, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "black";
+        ctx.fill();
     });
 
     if (tempConnection) {
@@ -70,6 +78,12 @@ function draw() {
         ctx.strokeStyle = "gray";
         ctx.lineWidth = 1.5;
         ctx.stroke();
+
+        // วาดวงกลมที่ปลายเส้นเชื่อมต่อชั่วคราว
+        ctx.beginPath();
+        ctx.arc(tempConnection.endX, tempConnection.endY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "black";
+        ctx.fill();
     }
 
     nodes.forEach(node => {
@@ -144,6 +158,8 @@ canvas.addEventListener("mousemove", (event) => {
     if (isDragging && selectedNode) {
         selectedNode.x = event.offsetX - selectedNode.width / 2;
         selectedNode.y = event.offsetY - selectedNode.height / 2;
+        getMaxXAndYValues();
+        expandCanvasIfNeeded();
         draw();
     } else if (tempConnection) {
         tempConnection.endX = event.offsetX;
@@ -216,6 +232,7 @@ canvas.addEventListener("click", (event) => {
         clearNodeInfo(); // ล้างข้อมูลเมื่อไม่มีโหนดถูกเลือก
     }
     draw();
+    
 });
 
 document.addEventListener("keydown", (event) => {
@@ -261,8 +278,8 @@ document.getElementById("addNodeButton").addEventListener("click", addNode);
 document.getElementById("saveNodeButton").addEventListener("click", () => {
     const title = document.getElementById("nodeTitle").value;
     const newNode = {
-        x: Math.random() * (canvas.width / scale - 100),
-        y: Math.random() * (canvas.height / scale - 100),
+        x: (canvas.width / scale - 100) / 2,
+        y: (canvas.height / scale - 100) / 2,
         width: 100,
         height: 50,
         id: nodes.length + 1,
@@ -374,3 +391,63 @@ function createButton(text, width, height, backgroundColor) {
 }
 
 document.getElementById("addTextButton").addEventListener("click", createForm);
+
+function getMaxXAndYValues() {
+    maxX = 0;
+    maxY = 0;
+    for (const key in allNodeValue) {
+        if (allNodeValue[key].x + allNodeValue[key].width > maxX) {
+            maxX = allNodeValue[key].x + allNodeValue[key].width;
+        }
+        if (allNodeValue[key].y + allNodeValue[key].height > maxY) {
+            maxY = allNodeValue[key].y + allNodeValue[key].height;
+        }
+    }
+    console.log({ maxX, maxY });
+    console.log(`${canvas.width}px`, `${canvas.height}px`);
+}
+
+function expandCanvasIfNeeded() {
+    const X = maxX + 50; // เพิ่ม margin 50px
+    const Y = maxY + 50;
+    if (X > canvas.width / scale || Y > canvas.height / scale) {
+        canvas.width = Math.max(canvas.width / scale, X) * scale;
+        canvas.height = Math.max(canvas.height / scale, Y) * scale;
+        canvas.style.width = `${Math.max(canvas.width / scale, X)}px`;
+        canvas.style.height = `${Math.max(canvas.height / scale, Y)}px`;
+        ctx.scale(scale, scale);
+        draw(); // รีวาดหลังขยาย
+
+        // เลื่อนหน้าเว็บไปยังจุดที่ลาก
+        window.scrollTo({ left: maxX - window.innerWidth / 2, top: maxY - window.innerHeight / 2, behavior: "smooth" });
+    }
+}
+
+
+
+canvas.addEventListener("contextmenu", (event) => {
+    event.preventDefault(); // ป้องกันเมนูบริบทเริ่มต้นของเบราว์เซอร์
+    document.getElementById("nodeForm").style.display = "block";
+    draw();
+});
+
+
+canvas.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const zoomFactor = 0.1;
+    const mouseX = event.offsetX;
+    const mouseY = event.offsetY;
+
+    if (event.deltaY < 0) {
+        // Zoom in
+        ctx.scale(1 + zoomFactor, 1 + zoomFactor);
+        ctx.translate(-mouseX * zoomFactor, -mouseY * zoomFactor);
+    } else {
+        // Zoom out
+        ctx.scale(1 - zoomFactor, 1 - zoomFactor);
+        ctx.translate(mouseX * zoomFactor, mouseY * zoomFactor);
+    }
+
+    draw();
+});
+
