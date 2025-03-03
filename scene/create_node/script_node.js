@@ -410,17 +410,18 @@ document.getElementById("addTextButton").addEventListener("click", createForm);
 function getMaxXAndYValues() {
     maxX = 0;
     maxY = 0;
-    for (const key in allNodeValue) {
-        if (allNodeValue[key].x + allNodeValue[key].width > maxX) {
-            maxX = allNodeValue[key].x + allNodeValue[key].width;
+    nodes.forEach(node => {
+        if (node.x + node.width > maxX) {
+            maxX = node.x + node.width;
         }
-        if (allNodeValue[key].y + allNodeValue[key].height > maxY) {
-            maxY = allNodeValue[key].y + allNodeValue[key].height;
+        if (node.y + node.height > maxY) {
+            maxY = node.y + node.height;
         }
-    }
+    });
     console.log({ maxX, maxY });
     console.log(`${canvas.width}px`, `${canvas.height}px`);
 }
+
 
 function expandCanvasIfNeeded() {
     const X = maxX + 50; // เพิ่ม margin 50px
