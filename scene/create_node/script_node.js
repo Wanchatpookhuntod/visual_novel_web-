@@ -19,6 +19,15 @@ let selectedNode = null;
 let maxX = 0;
 let maxY = 0;
 
+// ฟังก์ชันสำหรับแปลงพิกัดของ mouse event ตาม transformation ปัจจุบันของ canvas
+function getTransformedPoint(event) {
+    const transform = ctx.getTransform();
+    return {
+        x: (event.offsetX - transform.e) / transform.a,
+        y: (event.offsetY - transform.f) / transform.d
+    };
+}
+
 function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -141,13 +150,18 @@ function isConnected(node, type) {
 }
 
 canvas.addEventListener("mousedown", (event) => {
-    const { offsetX, offsetY } = event;
-    const outputNode = getOutputAt(offsetX, offsetY);
+    const { x, y } = getTransformedPoint(event);
+    const outputNode = getOutputAt(x, y);
     if (outputNode) {
         selectedOutput = outputNode;
-        tempConnection = { x: outputNode.x + outputNode.width + 10, y: outputNode.y + outputNode.height / 2, endX: offsetX, endY: offsetY };
+        tempConnection = { 
+            x: outputNode.x + outputNode.width + 10, 
+            y: outputNode.y + outputNode.height / 2, 
+            endX: x, 
+            endY: y 
+        };
     } else {
-        selectedNode = getNodeAt(offsetX, offsetY);
+        selectedNode = getNodeAt(x, y);
         if (selectedNode) {
             isDragging = true;
         }
@@ -155,25 +169,27 @@ canvas.addEventListener("mousedown", (event) => {
 });
 
 canvas.addEventListener("mousemove", (event) => {
+    const { x, y } = getTransformedPoint(event);
     if (isDragging && selectedNode) {
-        selectedNode.x = event.offsetX - selectedNode.width / 2;
-        selectedNode.y = event.offsetY - selectedNode.height / 2;
+        selectedNode.x = x - selectedNode.width / 2;
+        selectedNode.y = y - selectedNode.height / 2;
         getMaxXAndYValues();
         expandCanvasIfNeeded();
         draw();
     } else if (tempConnection) {
-        tempConnection.endX = event.offsetX;
-        tempConnection.endY = event.offsetY;
+        tempConnection.endX = x;
+        tempConnection.endY = y;
         draw();
     }
 });
 
 canvas.addEventListener("mouseup", (event) => {
+    const { x, y } = getTransformedPoint(event);
     if (isDragging) {
         isDragging = false;
         selectedNode = null;
     } else if (tempConnection) {
-        const targetNode = getInputAt(event.offsetX, event.offsetY);
+        const targetNode = getInputAt(x, y);
         if (targetNode && selectedOutput !== targetNode) {
             connections.push({ from: selectedOutput, to: targetNode });
 
@@ -194,8 +210,8 @@ canvas.addEventListener("mouseup", (event) => {
 });
 
 canvas.addEventListener("dblclick", (event) => {
-    const { offsetX, offsetY } = event;
-    const targetNode = getInputAt(offsetX, offsetY);
+    const { x, y } = getTransformedPoint(event);
+    const targetNode = getInputAt(x, y);
     if (targetNode) {
         // ลบการเชื่อมต่อที่เกี่ยวข้องกับ targetNode
         const connectionsToRemove = connections.filter(connection => connection.to === targetNode);
@@ -222,8 +238,8 @@ canvas.addEventListener("dblclick", (event) => {
 });
 
 canvas.addEventListener("click", (event) => {
-    const { offsetX, offsetY } = event;
-    const clickedNode = getNodeAt(offsetX, offsetY);
+    const { x, y } = getTransformedPoint(event);
+    const clickedNode = getNodeAt(x, y);
     if (clickedNode) {
         selectedNode = clickedNode;
         displayNodeInfo(clickedNode); // แสดงข้อมูลของโหนดที่เลือก
@@ -232,7 +248,6 @@ canvas.addEventListener("click", (event) => {
         clearNodeInfo(); // ล้างข้อมูลเมื่อไม่มีโหนดถูกเลือก
     }
     draw();
-    
 });
 
 document.addEventListener("keydown", (event) => {
@@ -423,14 +438,11 @@ function expandCanvasIfNeeded() {
     }
 }
 
-
-
 canvas.addEventListener("contextmenu", (event) => {
     event.preventDefault(); // ป้องกันเมนูบริบทเริ่มต้นของเบราว์เซอร์
     document.getElementById("nodeForm").style.display = "block";
     draw();
 });
-
 
 canvas.addEventListener("wheel", (event) => {
     event.preventDefault();
@@ -450,4 +462,3 @@ canvas.addEventListener("wheel", (event) => {
 
     draw();
 });
-
