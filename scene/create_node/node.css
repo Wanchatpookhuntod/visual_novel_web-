@@ -1,15 +1,15 @@
 body {
     margin: 0;
-    overflow: hidden;
+    overflow: auto;
 }
 
 canvas {
     display: block;
     background-color: #f0f0f0;
+    position: absolute;
 }
 
 #addNodeButton {
-    padding: 10px 20px;
     font-size: 16px;
     background-color: #007bff;
     color: white;
@@ -19,8 +19,10 @@ canvas {
     z-index: 10;
     position: absolute;
     top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 30px;
+    width: 100px;
+    height: 40px;
+    
 }
 
 #nodeForm {
@@ -111,4 +113,35 @@ canvas {
     align-items: center;
     /* height: 100%; */
     min-height: 30px;
+}
+
+#nodeInfo {
+    z-index: 2;
+    position: absolute;
+    background-color: white;
+    padding: 10px;
+    /* border: 1px solid black; */
+    top: 30px;
+    left: 30px;
+    display: none;
+    width: auto;
+}
+
+#nodeInfo li {
+    width: auto;
+    margin: 0;
+    font-size: 14px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+#divCanvas {
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#btnForm {
+    display: flex;
 }

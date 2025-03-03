@@ -1,4 +1,3 @@
-
 let allNodeValue = {};
 
 const canvas = document.getElementById("flowchartCanvas");
@@ -11,19 +10,14 @@ canvas.style.width = `${window.innerWidth - 20}px`;
 canvas.style.height = `${window.innerHeight - 20}px`;
 ctx.scale(scale, scale);
 
-let nodes = [
-    { x: 100, y: 100, width: 80, height: 50, id: 1, title: "Node 1" },
-    { x: 300, y: 200, width: 80, height: 50, id: 2, title: "Node 2" },
-    { x: 500, y: 100, width: 80, height: 50, id: 3, title: "Node 3" }
-];
-
+let nodes = [];
 let connections = [];
 let selectedOutput = null;
 let tempConnection = null;
 let isDragging = false;
 let selectedNode = null;
 
-function drawRoundedRect(x, y, width, height, radius) {
+function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
     ctx.lineTo(x + width - radius, y);
@@ -37,9 +31,16 @@ function drawRoundedRect(x, y, width, height, radius) {
     ctx.closePath();
     ctx.fillStyle = "white";
     ctx.fill();
-    ctx.strokeStyle = "#ccc";
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = isSelected ? "#007bff" : "#ccc";
+    ctx.lineWidth = 1.2;
     ctx.stroke();
+
+    // วาดตัวอักษรให้อยู่กึ่งกลาง
+    ctx.fillStyle = "black";
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(title, x + width / 2, y + height / 2);
 }
 
 function draw() {
@@ -47,8 +48,12 @@ function draw() {
 
     connections.forEach(({ from, to }) => {
         ctx.beginPath();
-        ctx.moveTo(from.x + from.width + 10, from.y + from.height / 2);
-        ctx.lineTo(to.x - 10, to.y + to.height / 2);
+        ctx.moveTo(from.x + from.width + 5, from.y + from.height / 2);
+        const cp1x = from.x + from.width + 50;
+        const cp1y = from.y + from.height / 2;
+        const cp2x = to.x - 50;
+        const cp2y = to.y + to.height / 2;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, to.x - 5, to.y + to.height / 2);
         ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         ctx.stroke();
@@ -57,27 +62,34 @@ function draw() {
     if (tempConnection) {
         ctx.beginPath();
         ctx.moveTo(tempConnection.x, tempConnection.y);
-        ctx.lineTo(tempConnection.endX, tempConnection.endY);
+        const cp1x = tempConnection.x + 50;
+        const cp1y = tempConnection.y;
+        const cp2x = tempConnection.endX - 50;
+        const cp2y = tempConnection.endY;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, tempConnection.endX, tempConnection.endY);
         ctx.strokeStyle = "gray";
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
     }
 
     nodes.forEach(node => {
-        drawRoundedRect(node.x, node.y, node.width, node.height, 5);
-        ctx.fillStyle = "black";
-        ctx.font = "bold 14px Arial";
-        ctx.fillText(node.title, node.x + 10, node.y + node.height / 2 + 5);
+        drawRoundedRect(node.x, node.y, node.width, node.height, 5, node.title, node === selectedNode);
 
         ctx.beginPath();
-        ctx.arc(node.x - 10, node.y + node.height / 2, 7, 0, Math.PI * 2);
-        ctx.fillStyle = "red";
+        ctx.arc(node.x - 5, node.y + node.height / 2, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#ccc";
         ctx.fill();
+        ctx.strokeStyle = node === selectedNode ? "#007bff" : "gray";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(node.x + node.width + 10, node.y + node.height / 2, 7, 0, Math.PI * 2);
-        ctx.fillStyle = "green";
+        ctx.arc(node.x + node.width + 5, node.y + node.height / 2, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#ccc";
         ctx.fill();
+        ctx.strokeStyle = node === selectedNode ? "#007bff" : "gray";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
     });
 }
 
@@ -85,17 +97,32 @@ draw();
 
 function getOutputAt(x, y) {
     return nodes.find(node => {
-        const dx = x - (node.x + node.width + 10);
+        const dx = x - (node.x + node.width + 5);
         const dy = y - (node.y + node.height / 2);
-        return Math.sqrt(dx * dx + dy * dy) <= 7;
+        return Math.sqrt(dx * dx + dy * dy) <= 5;
     });
 }
 
 function getInputAt(x, y) {
     return nodes.find(node => {
-        const dx = x - (node.x - 10);
+        const dx = x - (node.x - 5);
         const dy = y - (node.y + node.height / 2);
-        return Math.sqrt(dx * dx + dy * dy) <= 7;
+        return Math.sqrt(dx * dx + dy * dy) <= 5;
+    });
+}
+
+function getNodeAt(x, y) {
+    return nodes.find(node => x > node.x && x < node.x + node.width && y > node.y && y < node.y + node.height);
+}
+
+function isConnected(node, type) {
+    return connections.some(connection => {
+        if (type === 'input') {
+            return connection.to === node;
+        } else if (type === 'output') {
+            return connection.from === node;
+        }
+        return false;
     });
 }
 
@@ -106,7 +133,7 @@ canvas.addEventListener("mousedown", (event) => {
         selectedOutput = outputNode;
         tempConnection = { x: outputNode.x + outputNode.width + 10, y: outputNode.y + outputNode.height / 2, endX: offsetX, endY: offsetY };
     } else {
-        selectedNode = nodes.find(node => offsetX > node.x && offsetX < node.x + node.width && offsetY > node.y && offsetY < node.y + node.height);
+        selectedNode = getNodeAt(offsetX, offsetY);
         if (selectedNode) {
             isDragging = true;
         }
@@ -133,12 +160,97 @@ canvas.addEventListener("mouseup", (event) => {
         const targetNode = getInputAt(event.offsetX, event.offsetY);
         if (targetNode && selectedOutput !== targetNode) {
             connections.push({ from: selectedOutput, to: targetNode });
+
+            // เพิ่มข้อมูลการเชื่อมต่อไปยังโหนด
+            if (!selectedOutput.connections) {
+                selectedOutput.connections = [];
+            }
+            if (!targetNode.connections) {
+                targetNode.connections = [];
+            }
+            selectedOutput.connections.push({ next: targetNode.title });
+            targetNode.connections.push({ previous: selectedOutput.title });
         }
         tempConnection = null;
         selectedOutput = null;
         draw();
     }
 });
+
+canvas.addEventListener("dblclick", (event) => {
+    const { offsetX, offsetY } = event;
+    const targetNode = getInputAt(offsetX, offsetY);
+    if (targetNode) {
+        // ลบการเชื่อมต่อที่เกี่ยวข้องกับ targetNode
+        const connectionsToRemove = connections.filter(connection => connection.to === targetNode);
+        connectionsToRemove.forEach(connection => {
+            const fromNode = connection.from;
+            fromNode.connections = fromNode.connections.filter(conn => conn.next !== targetNode.title);
+        });
+        connections = connections.filter(connection => connection.to !== targetNode);
+
+        // ลบข้อมูลการเชื่อมต่อในโหนด
+        targetNode.connections = targetNode.connections.filter(connection => connection.previous !== targetNode.title);
+
+        // ตรวจสอบและลบข้อมูล input และ output ถ้าไม่มีการเชื่อมต่ออยู่
+        nodes.forEach(node => {
+            if (!isConnected(node, 'input') && !isConnected(node, 'output')) {
+                node.connections = [];
+            } else {
+                node.connections = node.connections.filter(connection => connection.next !== targetNode.title && connection.previous !== targetNode.title);
+            }
+        });
+
+        draw();
+    }
+});
+
+canvas.addEventListener("click", (event) => {
+    const { offsetX, offsetY } = event;
+    const clickedNode = getNodeAt(offsetX, offsetY);
+    if (clickedNode) {
+        selectedNode = clickedNode;
+        displayNodeInfo(clickedNode); // แสดงข้อมูลของโหนดที่เลือก
+    } else {
+        selectedNode = null;
+        clearNodeInfo(); // ล้างข้อมูลเมื่อไม่มีโหนดถูกเลือก
+    }
+    draw();
+});
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Delete" && selectedNode) {
+        // ลบโหนดที่เลือก
+        nodes = nodes.filter(node => node !== selectedNode);
+        connections = connections.filter(connection => connection.from !== selectedNode && connection.to !== selectedNode);
+        delete allNodeValue[selectedNode.title]; // ลบข้อมูลของโหนดจาก allNodeValue
+        selectedNode = null;
+        clearNodeInfo();
+        draw();
+    }
+});
+
+function displayNodeInfo(node) {
+    const nodeInfo = document.getElementById("nodeInfo");
+    nodeInfo.style.display = "block";
+    nodeInfo.innerHTML = `
+        <p><strong>Scene:</strong> ${node.title}</p>
+        <p><strong>Dialog: sp/text</strong></p>
+        <ul>
+            ${node.texts.map(text => `<li>${text.speaker} >> ${text.text}</li>`).join('')}
+        </ul>
+        <p><strong>Prev/Next:</strong></p>
+        <ul>
+            ${node.connections.map(conn => `<li>${conn.previous ? 'Previous: ' + conn.previous : 'Next: ' + conn.next}</li>`).join('')}
+        </ul>
+    `;
+}
+
+function clearNodeInfo() {
+    const nodeInfo = document.getElementById("nodeInfo");
+    nodeInfo.innerHTML = '';
+    nodeInfo.style.display = "none";
+}
 
 function addNode() {
     document.getElementById("nodeForm").style.display = "block";
@@ -151,34 +263,25 @@ document.getElementById("saveNodeButton").addEventListener("click", () => {
     const newNode = {
         x: Math.random() * (canvas.width / scale - 100),
         y: Math.random() * (canvas.height / scale - 100),
-        width: 80,
+        width: 100,
         height: 50,
         id: nodes.length + 1,
-        title: title
+        title: title,
+        texts: [],
+        connections: [] // เพิ่มฟิลด์ connections เพื่อเก็บข้อมูลการเชื่อมต่อ
     };
 
-    const adTextForms = document.querySelectorAll(".container");
-    const texts = [];
+    const adTextForms = document.querySelectorAll("form");
     adTextForms.forEach(form => {
-        const speaker = form.querySelector("input").value;
-        const text = form.querySelector("textarea").value;
-        texts.push({ speaker, text });
+        const speaker = form.querySelector("input[type='speaker']").value;
+        const text = form.querySelector("input[type='text']").value;
+        newNode.texts.push({ speaker, text });
         form.remove();
     });
 
-    newNode.texts = texts
-
-
-    const nodeValue = {
-        title: title,
-        texts: texts
-    };
-
-
-    allNodeValue[nodeValue.title] = nodeValue;
+    allNodeValue[newNode.title] = newNode;
 
     console.log(allNodeValue);
-
 
     nodes.push(newNode);
 
@@ -189,42 +292,8 @@ document.getElementById("saveNodeButton").addEventListener("click", () => {
 });
 
 let formCount = 0;
-document.getElementById("addTextButton").addEventListener("click", () => {
-    // const adTextForm = document.createElement("div");
-    // adTextForm.className = "container";
-    // adTextForm.style.marginTop = "5px";
 
-    // const speakerDiv = document.createElement("div");
-    // const speakerInput = document.createElement("input");
-    // speakerInput.type = "text";
-    // speakerInput.placeholder = "speaker";
-    // speakerDiv.appendChild(speakerInput);
-
-    // const textDiv = document.createElement("div");
-    // const textarea = document.createElement("textarea");
-    // textarea.type = "text";
-    // textarea.placeholder = "Text dialog";
-    // textDiv.appendChild(textarea);
-
-    // const removeDiv = document.createElement("div");
-    // const removeButton = document.createElement("button");
-    // removeDiv.appendChild(removeButton);
-    // removeButton.className = "removeButton";
-    // removeButton.innerHTML = "remove";
-
-    // removeButton.addEventListener("click", () => {
-    //     adTextForm.remove();
-    // });
-
-
-    // adTextForm.appendChild(speakerDiv);
-    // adTextForm.appendChild(textDiv);
-    // adTextForm.appendChild(removeDiv);
-
-    // document.getElementById("nodeForm").insertBefore(adTextForm, document.getElementById("btnForm"));
-
-
-
+function createForm() {
     formCount++;
     const form = document.createElement('form');
 
@@ -237,61 +306,71 @@ document.getElementById("addTextButton").addEventListener("click", () => {
 
     const row = document.createElement('tr');
 
-    const labelCell = document.createElement('td');
-    labelCell.style.width = '5%';
-    labelCell.style.height = '100%';
-    const label = document.createElement('label');
-    label.style.width = '100%';
-    label.style.height = '50%';
-    label.style.margin = 'auto';
-    label.style.fontSize = '1em';
-    label.textContent = `script ${formCount}`;
+    const labelCell = createCell('td', '5%', '100%');
+    const label = createLabel(`script ${formCount}`, '100%', '50%');
     labelCell.appendChild(label);
     row.appendChild(labelCell);
 
-    const inputCell1 = document.createElement('td');
-    inputCell1.style.width = '25%';
-    inputCell1.style.height = '100%';
-    const input1 = document.createElement('input');
-    input1.style.width = '100%';
-    input1.style.height = '50%';
-    input1.style.margin = 'auto';
-    input1.type = 'text';
-    input1.id = 'field2';
-    input1.name = 'field2';
+    const inputCell1 = createCell('td', '25%', '100%');
+    const input1 = createInput('speaker', '100%', '50%', 'speaker', 'speaker');
     inputCell1.appendChild(input1);
     row.appendChild(inputCell1);
 
-    const inputCell2 = document.createElement('td');
-    inputCell2.style.width = '65%';
-    inputCell2.style.height = '100%';
-    const input2 = document.createElement('input');
-    input2.type = 'text';
-    input2.style.margin = 'auto';
-    input2.style.width = '100%';
+    const inputCell2 = createCell('td', '65%', '100%');
+    const input2 = createInput('text', '100%', 'auto', 'text', 'text');
     inputCell2.appendChild(input2);
     row.appendChild(inputCell2);
 
-    const buttonCell = document.createElement('td');
-    buttonCell.style.width = '5%';
-    buttonCell.style.height = '100%';
-    const buttonRemove = document.createElement('button');
-    buttonRemove.className = 'buttonRemove';
-    buttonRemove.style.width = '30px';
-    buttonRemove.style.height = '30px';
-    buttonRemove.style.backgroundColor = "#ff1f53";
-    buttonRemove.style.display = 'block';
-    buttonRemove.textContent = 'X';
-    buttonRemove.style.margin = 'auto';
-    
+    const buttonCell = createCell('td', '5%', '100%');
+    const buttonRemove = createButton('X', '30px', '30px', '#ff1f53');
+    buttonRemove.addEventListener('click', () => form.remove());
     buttonCell.appendChild(buttonRemove);
     row.appendChild(buttonCell);
-    buttonRemove.addEventListener('click', function () {
-        form.remove();
-    });
 
     table.appendChild(row);
     form.appendChild(table);
 
     document.getElementById("nodeForm").insertBefore(form, document.getElementById("btnForm"));
-});
+}
+
+function createCell(tag, width, height) {
+    const cell = document.createElement(tag);
+    cell.style.width = width;
+    cell.style.height = height;
+    return cell;
+}
+
+function createLabel(text, width, height) {
+    const label = document.createElement('label');
+    label.style.width = width;
+    label.style.height = height;
+    label.style.margin = 'auto';
+    label.style.fontSize = '1em';
+    label.textContent = text;
+    return label;
+}
+
+function createInput(type, width, height, id = '', name = '') {
+    const input = document.createElement('input');
+    input.type = type;
+    input.style.width = width;
+    input.style.height = height;
+    input.style.margin = 'auto';
+    if (id) input.id = id;
+    if (name) input.name = name;
+    return input;
+}
+
+function createButton(text, width, height, backgroundColor) {
+    const button = document.createElement('button');
+    button.className = 'buttonRemove';
+    button.style.width = width;
+    button.style.height = height;
+    button.style.backgroundColor = backgroundColor;
+    button.style.display = 'block';
+    button.style.margin = 'auto';
+    button.textContent = text;
+    return button;
+}
+
+document.getElementById("addTextButton").addEventListener("click", createForm);
