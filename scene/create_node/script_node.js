@@ -149,6 +149,8 @@ function isConnected(node, type) {
     });
 }
 
+let isPanning = false;
+let panStart = { x: 0, y: 0 };
 canvas.addEventListener("mousedown", (event) => {
     const { x, y } = getTransformedPoint(event);
     const outputNode = getOutputAt(x, y);
@@ -160,16 +162,39 @@ canvas.addEventListener("mousedown", (event) => {
             endX: x, 
             endY: y 
         };
+        return;
     } else {
         selectedNode = getNodeAt(x, y);
         if (selectedNode) {
             isDragging = true;
+            return;
         }
     }
+
+    // ถ้าไม่อยู่บนโหนดหรือ output ให้เริ่มการ pan view
+    isPanning = true;
+    panStart = { x: event.offsetX, y: event.offsetY };
+
+
+
+
 });
 
 canvas.addEventListener("mousemove", (event) => {
     const { x, y } = getTransformedPoint(event);
+
+
+    // หากอยู่ในโหมด pan view
+    if (isPanning) {
+        const dx = event.offsetX - panStart.x;
+        const dy = event.offsetY - panStart.y;
+        ctx.translate(dx, dy);
+        panStart = { x: event.offsetX, y: event.offsetY };
+        draw();
+        return;
+    }
+
+
     if (isDragging && selectedNode) {
         selectedNode.x = x - selectedNode.width / 2;
         selectedNode.y = y - selectedNode.height / 2;
@@ -181,9 +206,18 @@ canvas.addEventListener("mousemove", (event) => {
         tempConnection.endY = y;
         draw();
     }
+
+
+
 });
 
 canvas.addEventListener("mouseup", (event) => {
+    
+    if (isPanning) {
+        isPanning = false;
+        return;
+    }
+    
     const { x, y } = getTransformedPoint(event);
     if (isDragging) {
         isDragging = false;
