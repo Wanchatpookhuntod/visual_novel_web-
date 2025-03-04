@@ -28,6 +28,20 @@ function getTransformedPoint(event) {
     };
 }
 
+
+function drawFullCanvasRect() {
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width / scale, canvas.height / scale);
+    ctx.fillStyle = "white";
+    ctx.fill();
+}
+
+// drawFullCanvasRect();
+
+
+
+
+
 function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -54,8 +68,15 @@ function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
     ctx.fillText(title, x + width / 2, y + height / 2);
 }
 
+
 function draw() {
+    ctx.save();
+    // รีเซ็ต transform เป็น identity เพื่อให้ clearRect ล้าง canvas ครบทุกส่วน
+    // ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // คืนสถานะ transformation ที่บันทึกไว้
+    // ctx.restore();
+    // drawFullCanvasRect();
 
     connections.forEach(({ from, to }) => {
         ctx.beginPath();
@@ -93,9 +114,21 @@ function draw() {
         ctx.arc(tempConnection.endX, tempConnection.endY, 5, 0, Math.PI * 2);
         ctx.fillStyle = "black";
         ctx.fill();
+
+        
     }
 
     nodes.forEach(node => {
+
+        if (node.x < 20){
+            node.x = 20;
+        }
+        if (node.y < 20){
+            node.y = 20;
+        }
+
+
+        
         drawRoundedRect(node.x, node.y, node.width, node.height, 5, node.title, node === selectedNode);
 
         ctx.beginPath();
@@ -272,6 +305,7 @@ canvas.addEventListener("dblclick", (event) => {
 });
 
 canvas.addEventListener("click", (event) => {
+    console.log(canvas.width, canvas.height);
     const { x, y } = getTransformedPoint(event);
     const clickedNode = getNodeAt(x, y);
     if (clickedNode) {
@@ -281,6 +315,9 @@ canvas.addEventListener("click", (event) => {
         selectedNode = null;
         clearNodeInfo(); // ล้างข้อมูลเมื่อไม่มีโหนดถูกเลือก
     }
+
+    
+
     draw();
 });
 
@@ -324,11 +361,17 @@ function addNode() {
 
 document.getElementById("addNodeButton").addEventListener("click", addNode);
 
+
+
+
 document.getElementById("saveNodeButton").addEventListener("click", () => {
     const title = document.getElementById("nodeTitle").value;
+    
+    
     const newNode = {
         x: (canvas.width / scale - 100) / 2,
         y: (canvas.height / scale - 100) / 2,
+      
         width: 100,
         height: 50,
         id: nodes.length + 1,
@@ -336,7 +379,6 @@ document.getElementById("saveNodeButton").addEventListener("click", () => {
         texts: [],
         connections: [] // เพิ่มฟิลด์ connections เพื่อเก็บข้อมูลการเชื่อมต่อ
     };
-
     const adTextForms = document.querySelectorAll("form");
     adTextForms.forEach(form => {
         const speaker = form.querySelector("input[type='speaker']").value;
@@ -474,9 +516,12 @@ function expandCanvasIfNeeded() {
 }
 
 canvas.addEventListener("contextmenu", (event) => {
+
     event.preventDefault(); // ป้องกันเมนูบริบทเริ่มต้นของเบราว์เซอร์
     document.getElementById("nodeForm").style.display = "block";
     draw();
+
+    
 });
 
 canvas.addEventListener("wheel", (event) => {
