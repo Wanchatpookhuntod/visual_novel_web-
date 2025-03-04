@@ -7,7 +7,7 @@ body {
 canvas {
     display: block;
     background-color: #e8e8e8;
-    position: fixed;
+    position: absolute;
 }
 
 #addNodeButton {
