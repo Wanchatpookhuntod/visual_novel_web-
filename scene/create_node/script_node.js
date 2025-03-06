@@ -3,12 +3,12 @@ let allNodeValue = {};
 const canvas = document.getElementById("flowchartCanvas");
 const ctx = canvas.getContext("2d");
 
-const scale = window.devicePixelRatio;
-canvas.width = (window.innerWidth - 20) * scale;
-canvas.height = (window.innerHeight - 20) * scale;
+// const scale = window.devicePixelRatio;
+canvas.width = (window.innerWidth - 20);
+canvas.height = (window.innerHeight - 20) ;
 canvas.style.width = `${window.innerWidth - 20}px`;
 canvas.style.height = `${window.innerHeight - 20}px`;
-ctx.scale(scale, scale);
+// ctx.scale(scale, scale);
 
 let nodes = [];
 let connections = [];
@@ -16,33 +16,6 @@ let selectedOutput = null;
 let tempConnection = null;
 let isDragging = false;
 let selectedNode = null;
-let maxX = 0;
-let maxY = 0;
-
-// ฟังก์ชันสำหรับแปลงพิกัดของ mouse event ตาม transformation ปัจจุบันของ canvas
-function getTransformedPoint(event) {
-    const transform = ctx.getTransform();
-    return {
-        x: (event.offsetX - transform.e) / transform.a,
-        y: (event.offsetY - transform.f) / transform.d
-    };
-}
-
-
-function drawFullCanvasRect() {
-    ctx.beginPath();
-    ctx.rect(0, 0, canvas.width / scale, canvas.height / scale);
-    ctx.fillStyle = "#ebebeb";
-    ctx.fill();
-    ctx.strokeStyle = "gray";
-    ctx.lineWidth = 1;
-}
-
-// drawFullCanvasRect();
-
-
-
-
 
 function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
     ctx.beginPath();
@@ -71,14 +44,20 @@ function drawRoundedRect(x, y, width, height, radius, title, isSelected) {
 }
 
 
+
+function drawRedCircle(x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, 25, 0, Math.PI * 2); // 25 is the radius for a 50x50 circle
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.stroke();
+}
+
+// Example usage:
+ // Draws a red circle at position (100, 100)
+
 function draw() {
-    ctx.save();
-    // รีเซ็ต transform เป็น identity เพื่อให้ clearRect ล้าง canvas ครบทุกส่วน
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // คืนสถานะ transformation ที่บันทึกไว้
-    drawFullCanvasRect();
-    ctx.restore();
 
     connections.forEach(({ from, to }) => {
         ctx.beginPath();
@@ -110,27 +89,9 @@ function draw() {
         ctx.strokeStyle = "gray";
         ctx.lineWidth = 1.5;
         ctx.stroke();
-
-        // วาดวงกลมที่ปลายเส้นเชื่อมต่อชั่วคราว
-        ctx.beginPath();
-        ctx.arc(tempConnection.endX, tempConnection.endY, 5, 0, Math.PI * 2);
-        ctx.fillStyle = "black";
-        ctx.fill();
-
-        
     }
 
     nodes.forEach(node => {
-
-        // if (node.x < 20){
-        //     node.x = 20;
-        // }
-        // if (node.y < 20){
-        //     node.y = 20;
-        // }
-
-
-        
         drawRoundedRect(node.x, node.y, node.width, node.height, 5, node.title, node === selectedNode);
 
         ctx.beginPath();
@@ -148,6 +109,10 @@ function draw() {
         ctx.strokeStyle = node === selectedNode ? "#007bff" : "gray";
         ctx.lineWidth = 1.2;
         ctx.stroke();
+
+       
+       
+
     });
 }
 
@@ -205,32 +170,9 @@ canvas.addEventListener("mousedown", (event) => {
             return;
         }
     }
-
-    // ถ้าไม่อยู่บนโหนดหรือ output ให้เริ่มการ pan view
-    isPanning = true;
-    panStart = { x: event.offsetX, y: event.offsetY };
-
-
-
-
 });
 
 canvas.addEventListener("mousemove", (event) => {
-    const { x, y } = getTransformedPoint(event);
-
-
-    // หากอยู่ในโหมด pan view
-    if (isPanning) {
-        const dx = event.offsetX - panStart.x;
-        const dy = event.offsetY - panStart.y;
-        ctx.translate(dx, dy);
-        panStart = { x: event.offsetX, y: event.offsetY };
-    
-        draw();
-        return;
-    }
-
-
     if (isDragging && selectedNode) {
         selectedNode.x = x - selectedNode.width / 2;
         selectedNode.y = y - selectedNode.height / 2;
@@ -343,7 +285,7 @@ function displayNodeInfo(node) {
         <p><strong>Scene:</strong> ${node.title}</p>
         <p><strong>Dialog: sp/text</strong></p>
         <ul>
-            ${node.texts.map(text => `<li>${text.speaker} >> ${text.text}</li>`).join('')}
+            ${node.texts.map(text => `<li>${text.speaker} >> ${text.text.slice(0, 20)}</li>`).join('')}
         </ul>
         <p><strong>Prev/Next:</strong></p>
         <ul>
@@ -364,16 +306,11 @@ function addNode() {
 
 document.getElementById("addNodeButton").addEventListener("click", addNode);
 
-
-
-
 document.getElementById("saveNodeButton").addEventListener("click", () => {
     const title = document.getElementById("nodeTitle").value;
-
     const newNode = {
-        x: (canvas.width / scale - 100) / 2,
-        y: (canvas.height / scale - 100) / 2,
-      
+        x: Math.random() * (canvas.width / scale - 100),
+        y: Math.random() * (canvas.height / scale - 100),
         width: 100,
         height: 50,
         id: nodes.length + 1,
@@ -484,70 +421,3 @@ function createButton(text, width, height, backgroundColor) {
 }
 
 document.getElementById("addTextButton").addEventListener("click", createForm);
-
-function getMaxXAndYValues() {
-    maxX = 0;
-    maxY = 0;
-    nodes.forEach(node => {
-        if (node.x + node.width > maxX) {
-            maxX = node.x + node.width;
-        }
-        if (node.y + node.height > maxY) {
-            maxY = node.y + node.height;
-        }
-    });
-    console.log({ maxX, maxY });
-    console.log(`${canvas.width}px`, `${canvas.height}px`);
-}
-
-
-function expandCanvasIfNeeded() {
-    const X = maxX + 50; // เพิ่ม margin 50px
-    const Y = maxY + 50;
-    if (X > canvas.width / scale || Y > canvas.height / scale) {
-        canvas.width = Math.max(canvas.width / scale, X) * scale;
-        canvas.height = Math.max(canvas.height / scale, Y) * scale;
-        canvas.style.width = `${Math.max(canvas.width / scale, X)}px`;
-        canvas.style.height = `${Math.max(canvas.height / scale, Y)}px`;
-        ctx.scale(scale, scale);
-        draw(); // รีวาดหลังขยาย
-
-        // เลื่อนหน้าเว็บไปยังจุดที่ลาก
-        window.scrollTo({ left: maxX - window.innerWidth / 2, top: maxY - window.innerHeight / 2, behavior: "smooth" });
-    }
-}
-
-canvas.addEventListener("contextmenu", (event) => {
-
-    event.preventDefault(); // ป้องกันเมนูบริบทเริ่มต้นของเบราว์เซอร์
-    document.getElementById("nodeForm").style.display = "block";
-    draw();
-
-    
-});
-
-canvas.addEventListener("wheel", (event) => {
-    event.preventDefault();
-    const zoomFactor = 0.1;
-    const mouseX = event.offsetX;
-    const mouseY = event.offsetY;
-
-    if (event.deltaY < 0) {
-        // Zoom in
-        ctx.scale(1 + zoomFactor, 1 + zoomFactor);
-        ctx.translate(-mouseX * zoomFactor, -mouseY * zoomFactor);
-    } else {
-        // Zoom out
-        ctx.scale(1 - zoomFactor, 1 - zoomFactor);
-        ctx.translate(mouseX * zoomFactor, mouseY * zoomFactor);
-    }
-    demo()
-
-    draw();
-});
-
-
-function demo(){
-    const rect = canvas.getBoundingClientRect();
-    console.log(`Canvas position: (${rect.left}, ${rect.top}), size: (${rect.width}, ${rect.height})`);
-}
